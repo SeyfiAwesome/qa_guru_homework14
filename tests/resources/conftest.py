@@ -2,8 +2,9 @@ import pytest
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selene import browser
+from selene.support.shared import config as shared_config
+
 from utils import attaches
-import os
 
 
 @pytest.fixture(autouse=True)
@@ -11,12 +12,6 @@ def browser_management():
     options = Options()
     options.add_argument("--disable-infobars")
     options.add_argument("--disable-notifications")
-
-    # Добавим поддержку headless для CI
-    if os.getenv('CI'):
-        options.add_argument("--headless")
-        options.add_argument("--no-sandbox")
-        options.add_argument("--disable-dev-shm-usage")
 
     selenoid_capabilities = {
         "browserName": "chrome",
@@ -34,8 +29,12 @@ def browser_management():
     )
 
     browser.config.driver = driver
+    shared_config.driver = driver  # Важно!
+
+    browser.config._driver = driver
+    browser.config._driver_get_strategy = lambda: driver
+
     browser.config.timeout = 10
-    browser.config.base_url = 'https://mwi.me/'  # Добавим base_url
 
     yield
 
