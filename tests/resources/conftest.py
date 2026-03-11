@@ -30,6 +30,7 @@ def browser_management():
 
     # browser.config.driver_options = options
     # browser.config.base_url = 'https://mwi.me/'
+    browser.config.driver = driver
     browser.config.timeout = 10
 
     yield
